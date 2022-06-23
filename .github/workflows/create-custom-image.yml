@@ -33,7 +33,7 @@ jobs:
       with:        
         resource-group-name: ${{env.resourceGroupName}}
         managed-identity: 'image-builder-demo-id'
-        location: 'Australia East'
+        location: 'australiaeast'
         source-os-type: 'windows'
         source-image-type: 'platformImage'
         source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest #unique  identitifier of source image
@@ -42,7 +42,7 @@ jobs:
           & 'c:\webApp\webconfig.ps1'
         dist-type: 'SharedImageGallery'
         dist-resource-id: '/subscriptions/${{env.subscriptionId}}/resourceGroups/${{env.resourceGroupName}}/providers/Microsoft.Compute/galleries/${{env.galleryName}}/images/${{env.imageName}}-${{ GITHUB.RUN_NUMBER }}'
-        dist-location: 'Australia East'
+        dist-location: 'australiaeast'
           
     - name: Create VM From Image
       uses: azure/CLI@v1
