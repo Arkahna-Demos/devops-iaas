@@ -1,8 +1,8 @@
 on: 
   workflow_dispatch
-    
   
-
+name: Create Custom Image
+    
 jobs:
   build-image:
     environment: 
