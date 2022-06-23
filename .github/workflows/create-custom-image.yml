@@ -43,6 +43,5 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast \
-          --image "${{ steps.<workflow_step_id>.outputs.custom-image-uri }}"           
+          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast --image "${{ steps.<workflow_step_id>.outputs.custom-image-uri }}"           
           
