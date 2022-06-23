@@ -33,7 +33,7 @@ jobs:
       with:        
         resource-group-name: ${{env.resourceGroupName}}
         managed-identity: 'image-builder-demo-id'
-        location: 'australiaeast'
+        location: 'eastus2'
         source-os-type: 'windows'
         source-image-type: 'platformImage'
         source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest #unique  identitifier of source image
