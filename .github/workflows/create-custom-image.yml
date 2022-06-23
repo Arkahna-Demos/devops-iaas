@@ -28,10 +28,6 @@ jobs:
         creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
         enable-AzPSSession: true 
 
-    - name: BUILD WEBAPP
-      run: sudo ${{ GITHUB.WORKSPACE }}/src/webApp/buildscript.sh # Run necessary build scripts and copies built artifacts to  ${{ GITHUB.WORKSPACE }}/workflow-artifacts
-      
-
     - name: BUILD-CUSTOM-VM-IMAGE      
       uses: azure/build-vm-image@v0
       with:        
