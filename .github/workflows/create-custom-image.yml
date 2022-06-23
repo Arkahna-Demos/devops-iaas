@@ -35,14 +35,15 @@ jobs:
     - name: BUILD-CUSTOM-VM-IMAGE      
       uses: azure/build-vm-image@v0
       with:        
-        resource-group-name: 'myResourceGroup'
+        resource-group-name: ${{env.resourceGroupName}}
         managed-identity: 'image-builder-demo-id'
         location: 'australiaeast'
-        source-os-type: 'linux'        
-        source-image: Canonical:UbuntuServer:18.04-LTS:latest      
+        source-os-type: 'windows'
+        source-image-type: 'platformImage'
+        source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest #unique  identitifier of source image
+        customizer-source: '${{ GITHUB.WORKSPACE }}\src\webApp'  # This folder gets copied tothe   image at location C:\
         customizer-script: |
-          sudo mkdir /buildArtifacts
-          sudo cp -r /tmp/ /buildArtifacts/
+          & 'c:\webApp\webconfig.ps1'
         dist-type: 'SharedImageGallery'
         dist-resource-id: '/subscriptions/${{env.subscriptionId}}/resourceGroups/${{env.resourceGroupName}}/providers/Microsoft.Compute/galleries/${{env.galleryName}}/images/${{env.imageName}}-${{ GITHUB.RUN_NUMBER }}'
         dist-location: 'australiaeast'
