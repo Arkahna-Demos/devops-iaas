@@ -1,0 +1,48 @@
+on: push
+
+jobs:
+  build-image:
+    environment: 
+      name: demo
+    env:
+      subscriptionId: "1ac24a19-378c-4d2e-b863-46ac934f3165"  
+      resourceGroupName: "rg-aib"
+      galleryName: "sigs31a"
+      imageName: "CustomImage"
+    runs-on: ubuntu-latest    
+    steps:
+    - name: CHECKOUT
+      uses: actions/checkout@v2
+  
+
+    - name: AZURE LOGIN 
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: BUILD WEBAPP
+      run: sudo ${{ GITHUB.WORKSPACE }}/src/webApp/buildscript.sh # Run necessary build scripts and copies built artifacts to  ${{ GITHUB.WORKSPACE }}/workflow-artifacts
+      
+
+    - name: BUILD-CUSTOM-VM-IMAGE      
+      uses: azure/build-vm-image@v0
+      with:        
+        resource-group-name: 'myResourceGroup'
+        managed-identity: 'image-builder-demo-id'
+        location: 'australiaeast'
+        source-os-type: 'linux'        
+        source-image: Canonical:UbuntuServer:18.04-LTS:latest      
+        customizer-script: |
+          sudo mkdir /buildArtifacts
+          sudo cp -r /tmp/ /buildArtifacts/
+        dist-type: 'SharedImageGallery'
+        dist-resource-id: '/subscriptions/${{subscriptionId}}/resourceGroups/${{resourceGroupName}}/providers/Microsoft.Compute/galleries/${{galleryName}}/images/${{imageName}}-${{ GITHUB.RUN_NUMBER }}'
+        dist-location: 'australiaeast'
+          
+    - name: Create VM From Image
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast \
+          --image "${{ steps.<workflow_step_id>.outputs.custom-image-uri }}"           
+          

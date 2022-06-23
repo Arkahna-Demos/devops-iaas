@@ -1,0 +1,83 @@
+{
+  "variables": {
+    "ADOServicePrincipalAppId": "5107b52c-ac8e-49eb-8b1d-2268c77dcd38",
+    "ADOServicePrincipalSecret": "",
+    "TenantId": "ab349e7e-45ba-422b-9bec-bb31a6c5b504",
+    "SubscriptionId": "5761ccd5-a605-4e1b-b8e9-f89e3be8f7a8",
+    "ImageDestRG": "mcs-azr-tst-ae-wvd-rg",    
+    "TempRG": "mcs-azr-tst-ae-wvd-rg",  
+    "Location": "Australia East",
+    "Environment": "tst",
+    "VMSize": "Standard_B4ms",
+    "ImageName" : "AZ-WVD-DEV-Image",
+
+    "StorageAccountInstallersName": "mcsazrprdaeasawvd",
+    "StorageAccountInstallersKey": "",
+    "StorageAccountInstallersPath": "\\\\mcsazrprdaeasawvd.file.core.windows.net\\procurainstallers",
+
+    "ImagePublisher":"MicrosoftWindowsDesktop",
+    "ImageOffer":"Windows-10",
+    "ImageSku":"20h1-evd"
+  },
+  "builders": [
+{
+      "type": "azure-arm",
+      "client_id": "{{user `ADOServicePrincipalAppId`}}",
+      "client_secret": "{{user `ADOServicePrincipalSecret`}}",
+      "tenant_id": "{{user `TenantId`}}",
+      "subscription_id": "{{user `SubscriptionId`}}",
+      "managed_image_resource_group_name": "{{user `ImageDestRG`}}",
+      "managed_image_name": "{{user `ImageName`}}",
+      "os_type": "Windows",
+      "image_publisher": "{{user `ImagePublisher`}}",
+      "image_offer": "{{user `ImageOffer`}}",
+      "image_sku": "{{user `ImageSku`}}",
+      "location": "{{user `Location`}}",
+      "vm_size": "{{user `VMSize`}}",
+      "communicator": "winrm",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "winrm_timeout": "10m",
+      "winrm_username": "packerwvdmcsxxxx",
+      "winrm_password": "P!a123exxxxrwvdmcs"
+    }],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "inline": [
+          "$ErrorActionPreference='Stop'",
+
+          "Import-Module -Name Smbshare -Force -Scope Local",
+          "$Usr='AzureAD\\'+\"{{user `StorageAccountInstallersName`}}\"",
+          "New-SmbMapping -LocalPath Z: -RemotePath \"{{user `StorageAccountInstallersPath`}}\" -Username \"$Usr\" -Password \"{{user `StorageAccountInstallersKey`}}\"",
+          "Write-Host \"'Z:' drive mapped\""
+      ]
+    },
+    {
+      "type": "powershell",
+      "script": "customize.ps1",
+      "elevated_user": "SYSTEM",
+      "elevated_password" : ""
+    },
+    {
+      "type": "powershell",
+      "script": "install-dependencies.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "install-office.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "install-procura-{{user `Environment`}}.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "optimize.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "sysprep.ps1"
+    }
+  ]
+}
