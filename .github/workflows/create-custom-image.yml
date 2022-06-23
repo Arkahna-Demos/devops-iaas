@@ -39,9 +39,4 @@ jobs:
         dist-resource-id: '/subscriptions/${{env.subscriptionId}}/resourceGroups/${{env.resourceGroupName}}/providers/Microsoft.Compute/galleries/${{env.galleryName}}/images/${{env.imageName}}-${{ GITHUB.RUN_NUMBER }}'
         dist-location: 'australiaeast'
           
-    - name: Create VM From Image
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast --image "${{ steps.<workflow_step_id>.outputs.custom-image-uri }}"           
           
