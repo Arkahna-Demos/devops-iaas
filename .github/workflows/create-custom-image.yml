@@ -50,3 +50,98 @@ jobs:
         inlineScript: |
           az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast --image "${{ steps.BUILD-CUSTOM-VM-IMAGE.outputs.imageUri }}"           
               
+  deploy-to-AU:
+    environment: 
+      name: demo
+    needs: [build-image]
+    env:
+      subscriptionId: "1ac24a19-378c-4d2e-b863-46ac934f3165"  
+      resourceGroupName: "image-builder-demo"
+      galleryName: "sigs31a"
+      imageName: "CustomImage"
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}           
+    runs-on: ubuntu-latest    
+    steps:
+    - name: CHECKOUT
+      uses: actions/checkout@v2
+  
+
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+        enable-AzPSSession: true 
+
+    - name: BUILD-CUSTOM-VM-IMAGE      
+      uses: azure/build-vm-image@v0
+      with:        
+        resource-group-name: ${{env.resourceGroupName}}
+        managed-identity: 'image-builder-demo-id'
+        location: 'eastus2'
+        source-os-type: 'windows'
+        source-image-type: 'platformImage'
+        source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest #unique  identitifier of source image
+        customizer-source: '${{ GITHUB.WORKSPACE }}/src/webApp'  # This folder gets copied tothe   image at location C:\
+        customizer-script: |
+          & 'c:\webApp\webconfig.ps1'
+        dist-type: 'SharedImageGallery'
+        dist-resource-id: '/subscriptions/${{env.subscriptionId}}/resourceGroups/${{env.resourceGroupName}}/providers/Microsoft.Compute/galleries/${{env.galleryName}}/images/${{env.imageName}}'
+        dist-location: 'australiaeast'
+          
+    - name: Create VM From Image
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast --image "${{ steps.BUILD-CUSTOM-VM-IMAGE.outputs.imageUri }}"           
+              
+   
+  deploy-to-EU:
+    environment: 
+      name: demo
+    needs: [build-image]
+    env:
+      subscriptionId: "1ac24a19-378c-4d2e-b863-46ac934f3165"  
+      resourceGroupName: "image-builder-demo"
+      galleryName: "sigs31a"
+      imageName: "CustomImage"
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}           
+    runs-on: ubuntu-latest    
+    steps:
+    - name: CHECKOUT
+      uses: actions/checkout@v2
+  
+
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+        enable-AzPSSession: true 
+
+    - name: BUILD-CUSTOM-VM-IMAGE      
+      uses: azure/build-vm-image@v0
+      with:        
+        resource-group-name: ${{env.resourceGroupName}}
+        managed-identity: 'image-builder-demo-id'
+        location: 'eastus2'
+        source-os-type: 'windows'
+        source-image-type: 'platformImage'
+        source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest #unique  identitifier of source image
+        customizer-source: '${{ GITHUB.WORKSPACE }}/src/webApp'  # This folder gets copied tothe   image at location C:\
+        customizer-script: |
+          & 'c:\webApp\webconfig.ps1'
+        dist-type: 'SharedImageGallery'
+        dist-resource-id: '/subscriptions/${{env.subscriptionId}}/resourceGroups/${{env.resourceGroupName}}/providers/Microsoft.Compute/galleries/${{env.galleryName}}/images/${{env.imageName}}'
+        dist-location: 'australiaeast'
+          
+    - name: Create VM From Image
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az vm create --resource-group ${{ env.resourceGroupName }}  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username vmUserName --admin-password "${{ secrets.vmPassword }}" --location  australiaeast --image "${{ steps.BUILD-CUSTOM-VM-IMAGE.outputs.imageUri }}"           
+              
