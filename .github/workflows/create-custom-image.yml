@@ -9,7 +9,7 @@ jobs:
       name: demo
     env:
       subscriptionId: "1ac24a19-378c-4d2e-b863-46ac934f3165"  
-      resourceGroupName: "rg-aib"
+      resourceGroupName: "image-builder-demo"
       galleryName: "sigs31a"
       imageName: "CustomImage"
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
