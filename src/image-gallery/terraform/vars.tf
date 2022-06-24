@@ -6,6 +6,6 @@ variable "deploy_location" {
 
 variable "rg_shared_name" {
   type        = string
-  default     = "rg-aib"
+  default     = "image-builder-demo"
   description = "Name of the Resource group in which to deploy shared resources"
 }

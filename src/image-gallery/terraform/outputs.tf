@@ -1,6 +1,6 @@
 output "location" {
   description = "The Azure region"
-  value       = azurerm_resource_group.sigrg.location
+  value       = var.deploy_location
 }
 
 output "Compute_Gallery" {
