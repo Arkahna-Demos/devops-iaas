@@ -37,3 +37,31 @@ resource "azurerm_shared_image" "example" {
     sku       = "20h2-evd-o365pp"
   }
 }
+
+resource "azurerm_shared_image" "web_server_image" {
+  name                = "avd-image"
+  gallery_name        = azurerm_shared_image_gallery.sig.name
+  resource_group_name = var.rg_shared_name
+  location            = var.deploy_location
+  os_type             = "Windows"
+
+  identifier {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "office-365"
+    sku       = "20h2-evd-o365pp"
+  }
+}
+
+resource "azurerm_shared_image" "sql_server" {
+  name                = "avd-image"
+  gallery_name        = azurerm_shared_image_gallery.sig.name
+  resource_group_name = var.rg_shared_name
+  location            = var.deploy_location
+  os_type             = "Windows"
+
+  identifier {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "office-365"
+    sku       = "20h2-evd-o365pp"
+  }
+}
