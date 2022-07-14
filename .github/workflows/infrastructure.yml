@@ -30,13 +30,13 @@ jobs:
 
       - name: Terragrunt Install
         id: terragrunt_install
-        working-directory: ./terraform/demo-environment/
+        working-directory: ./src//terraform/demo-environment/
         run: |
           brew install terragrunt    
           
       - name: Deploy Solution
         id: solution-deployment
-        working-directory: ./terraform/demo-environment/
+        working-directory: ./src/terraform/demo-environment/
         shell: pwsh
         run: |
           terragrunt init --terragrunt-config vars/demo/terragrunt.hcl -reconfigure
