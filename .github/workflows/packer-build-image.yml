@@ -5,6 +5,10 @@ on:
 
 jobs:
   packer:
+    environment: demo
+    env:
+      managed_image_name: devops-mi-nginx-${{github.run_number}}
+      resource_group_name: devops-iaas
     runs-on: ubuntu-latest
     name: packer
 
@@ -24,15 +28,16 @@ jobs:
         with:
           command: validate
           arguments: -syntax-only
-          target: packer.json
+          target: linux-nginx-azure.json
+          working_directory: src/packer
 
       # build artifact
       - name: Build Artifact
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          arguments: "-color=false -on-error=abort"
-          target: packer.json
+          arguments: "-color=false -on-error=abort -var tenant_id=$${{ secrets.tenant_id }} -var client_id=${{ secrets.client_id }} -var client_secret=${{ secrets.client_secret }} -var subscription_id=${{ secrets.subscription_id }} -var resource_group_name=${{ env.resource_group_name }} -var managed_image_name=${{ env.managed_image_name }} "
+          target: linux-nginx-azure.json
           working_directory: src/packer
         env:
           PACKER_LOG: 1
