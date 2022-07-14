@@ -20,6 +20,10 @@ variable "resource_location" {
 variable "resource_group_name" {
   type = string
 }
+variable "vm_password" {
+  type = string
+}
+
 #---------------------------------------------------------------
 # Tags
 #---------------------------------------------------------------
