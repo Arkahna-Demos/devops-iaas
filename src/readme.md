@@ -54,6 +54,11 @@ az vm create --resource-group $imageResourceGroup --name $vm_name  --image $imag
 
 az vm open-port --resource-group $imageResourceGroup --name $vm_name  --port 80
 
+# Deploying Infrastructure with Terraform
+terragrunt plan --terragrunt-config vars/local/terragrunt.hcl
+terragrunt apply --terragrunt-config vars/local/terragrunt.hcl
+
+
 # References and other reading
 https://medium.com/techno101/packer-a-complete-guide-with-example-cf062b7495eb
 https://www.digitalocean.com/community/tutorials/how-to-deploy-a-static-html-website-with-ansible-on-ubuntu-20-04-nginx
