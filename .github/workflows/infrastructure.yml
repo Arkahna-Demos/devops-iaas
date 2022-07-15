@@ -43,3 +43,42 @@ jobs:
           terragrunt init --terragrunt-config vars/demo/terragrunt.hcl -reconfigure
           terragrunt apply -auto-approve --terragrunt-config vars/demo/terragrunt.hcl
           
+    deploy-to-prod:
+      name: Deploy to Prod Environment
+      needs: [deploy-to-demo]
+      env:
+        # Required for Terraform
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}      
+        TF_VAR_vm_password: ${{ secrets.VMPASSWORD }}      
+    
+      environment: 
+        name: prod
+      runs-on: ubuntu-latest
+      steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: Login via Az module
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET  }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          enable-AzPSSession: true 
+          
+
+      - name: Terragrunt Install
+        id: terragrunt_install
+        working-directory: ./src//terraform/demo-environment/
+        run: |
+          brew install terragrunt    
+          
+      - name: Deploy Solution
+        id: solution-deployment
+        working-directory: ./src/terraform/demo-environment/
+        shell: pwsh
+        run: |
+          terragrunt init --terragrunt-config vars/demo/terragrunt.hcl -reconfigure
+          terragrunt apply -auto-approve --terragrunt-config vars/demo/terragrunt.hcl
