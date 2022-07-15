@@ -58,6 +58,9 @@ az vm open-port --resource-group $imageResourceGroup --name $vm_name  --port 80
 ```terragrunt plan --terragrunt-config vars/local/terragrunt.hcl
 terragrunt apply --terragrunt-config vars/local/terragrunt.hcl
 ```
+# Example Terraform folder structure for this demo
+![image](https://user-images.githubusercontent.com/6396931/179136741-8736f7e6-d493-4d8e-a542-c968a3019dcf.png)
+
 
 # References and other reading
 https://medium.com/techno101/packer-a-complete-guide-with-example-cf062b7495eb
